@@ -4,7 +4,8 @@ const optArticleSelector = '.post',
   optTitleSelector = '.post-title',
   optTitleListSelector = '.titles',
   optArticleAuthorSelector = '.post .post-author',
-  optArticleTagsSelector = '.post-tags .list';
+  optArticleTagsSelector = '.post-tags .list',
+  optTagsListSelector = '.sidebar .tags';
 
 const titleClickHandler = function (event) {
   //event.preventDefault();
@@ -58,6 +59,8 @@ function generateTitleLinks(customSelector = '') {
 }
 
 function generateTags() {
+  /* [NEW] create a new variable allTags with an empty array */
+  let allTags = {};
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector);
   /* START LOOP: for every article: */
@@ -76,14 +79,34 @@ function generateTags() {
       const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
       /* add generated code to html variable */
       html = html + ' ' + linkHTML;
+      /* [NEW] check if this link is NOT already in allTags */
+      if (!allTags[tag]) {
+        /* [NEW] add tag to allTags object */
+        allTags[tag] = 1;
+      } else {
+        allTags[tag]++;
+      }
       /* END LOOP: for each tag */
     }
     /* insert HTML of all the links into the tags wrapper */
     tagList.innerHTML = html;
     /* END LOOP: for every article: */
   }
-}
+  /* [NEW] find list of tags in right column */
+  const tagList = document.querySelector(optTagsListSelector);
+  /* [NEW] create variable for all links HTML code */
+  let allTagsHTML = '';
 
+  /* [NEW] START LOOP: for each tag in allTags: */
+  for (let tag in allTags) {
+    /* [NEW] generate code of a link and add it to allTagsHTML */
+    allTagsHTML += tag + ' (' + allTags[tag] + ') ';
+  }
+  /* [NEW] END LOOP: for each tag in allTags: */
+
+  /*[NEW] add HTML from allTagsHTML to tagList */
+  tagList.innerHTML = allTagsHTML;
+}
 
 function generateAuthors() {
   const articles = document.querySelectorAll(optArticleSelector);
@@ -94,7 +117,6 @@ function generateAuthors() {
     author.innerHTML = linkHTML;
   }
 }
-
 
 function tagClickHandler(event) {
   /* prevent default action for this event */
